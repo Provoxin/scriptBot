@@ -29,9 +29,9 @@ namespace scriptBot.SlashCommands
                 return;
             }
 
-            if (code.Contains(new char[] { 'U', '5' }))
+            if (code.Contains(new char[] { 'U' }))
             {
-                await CreateErrorMessage(ctx, "Code cannot contain 'U' or '5'");
+                await CreateErrorMessage(ctx, "Code cannot contain 'U'");
                 return;
             }
 
