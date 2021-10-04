@@ -5,4 +5,19 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="DSharpPlus" Version="4.2.0-nightly-01018" />
+    <PackageReference Include="DSharpPlus.SlashCommands" Version="4.2.0-nightly-01018" />
+    <PackageReference Include="System.Security.Permissions" Version="6.0.0-rc.1.21451.13" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Deltin.CustomGameAutomation">
+      <HintPath>..\Overwatch-Custom-Game-Automation\Deltin.CustomGameAutomation bin\Deltin.CustomGameAutomation.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Forms">
+      <HintPath>..\..\..\..\..\Windows\Microsoft.NET\Framework\v4.0.30319\System.Windows.Forms.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>
