@@ -1,16 +1,13 @@
-﻿using DSharpPlus;
-using DSharpPlus.SlashCommands;
-using System.IO;
-using System.Threading.Tasks;
-using scriptBot.SlashCommands;
-using Deltin.CustomGameAutomation;
-using System.Collections.Generic;
+﻿using Deltin.CustomGameAutomation;
+using DSharpPlus;
 using DSharpPlus.Entities;
-using System.Threading;
-using System.Text;
-using System.Text.RegularExpressions;
+using DSharpPlus.SlashCommands;
 using System;
 using System.Collections.Concurrent;
+using System.IO;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 enum Server : long
 {
@@ -26,14 +23,7 @@ namespace scriptBot
         public InteractionContext ctx;
         public string code;
 
-        public Command(RequestType requestType, InteractionContext ctx)
-        {
-            this.requestType = requestType;
-            this.ctx = ctx;
-            this.code = null;
-        }
-
-        public Command(RequestType requestType, InteractionContext ctx, string code)
+        public Command(RequestType requestType, InteractionContext ctx, string code = null)
         {
             this.requestType = requestType;
             this.ctx = ctx;
@@ -51,13 +41,13 @@ namespace scriptBot
     {
         private static CustomGame cg;
         private static BlockingCollection<Command> commandQueue;
-        //private static BlockingCollection<(string code, InteractionContext ctx, RequestType requestType)> commandQueue;
         private static DiscordClient discord;
+
+        public static bool paused = false;
 
         static void Main(string[] args)
         {
             commandQueue = new BlockingCollection<Command>();
-            //commandQueue = new BlockingCollection<(string code, InteractionContext ctx, RequestType requestType)>();  // taking from a blockingcollection waits for an element to appear wait when no elements remain
             SetupCustomGame();
 
             MainAsync().GetAwaiter().GetResult();
@@ -93,6 +83,7 @@ namespace scriptBot
             var slash = discord.UseSlashCommands();
             //slash.RegisterCommands<SlashCommands.SlashCommands>();  // global
             slash.RegisterCommands<SlashCommands.SlashCommands>((long)Server.Test);
+            slash.RegisterCommands<SlashCommands.OwnerCommands>((long)Server.Test);
             slash.RegisterCommands<SlashCommands.SlashCommands>((long)Server.GH);
 
             await discord.ConnectAsync();
@@ -107,6 +98,8 @@ namespace scriptBot
         private static async Task HandleCommandAsync()  // do everything needed to respond to the earliest command in the commandQueue
         {
             var cmd = commandQueue.Take();  // take earliest value. if there are no commands, wait until there is one
+            while (paused) await Task.Delay(1000);
+
             ConsoleColor consoleCol = Console.ForegroundColor;  // used to revert after coloring a line
 
             switch (cmd.requestType)
@@ -182,9 +175,7 @@ namespace scriptBot
         /// <param name="requestType">The type of request that has been made.</param>
         public static void AddToQueue(RequestType requestType, InteractionContext ctx, string code)
         {
-            Command cmd = new Command(requestType, ctx, code);
-            commandQueue.Add(cmd);
-            //commandQueue.Add((code, ctx, requestType));
+            commandQueue.Add(new Command(requestType, ctx, code));
         }
     }
 }

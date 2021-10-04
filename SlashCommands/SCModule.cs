@@ -1,12 +1,9 @@
 ﻿using DSharpPlus;
 using DSharpPlus.Entities;
 using DSharpPlus.SlashCommands;
-using System.Threading.Tasks;
-using System.IO;
-using Deltin.CustomGameAutomation;
 using System;
-using scriptBot;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace scriptBot.SlashCommands
 {
@@ -19,19 +16,19 @@ namespace scriptBot.SlashCommands
 
             if (code.Length <  5 || code.Length > 7)
             {
-                await CreateErrorMessage(ctx, "Code must be between 5 and 7 characters long");
+                await CreateEphemeralMessage(ctx, "Code must be between 5 and 7 characters long");
                 return;
             }
 
             if (!Regex.IsMatch(code, "^[A-Z0-9]+$"))
             {
-                await CreateErrorMessage(ctx, "Code must contain only alphanumeric characters");
+                await CreateEphemeralMessage(ctx, "Code must contain only alphanumeric characters");
                 return;
             }
 
             if (code.Contains(new char[] { 'U' }))
             {
-                await CreateErrorMessage(ctx, "Code cannot contain 'U'");
+                await CreateEphemeralMessage(ctx, "Code cannot contain 'U'");
                 return;
             }
 
@@ -40,7 +37,7 @@ namespace scriptBot.SlashCommands
             ScriptBot.AddToQueue(RequestType.Script, ctx, code);
         }
 
-        public async Task CreateErrorMessage(InteractionContext ctx, string message)
+        public async Task CreateEphemeralMessage(InteractionContext ctx, string message)
         {
             await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder()
                     .WithContent(message)
